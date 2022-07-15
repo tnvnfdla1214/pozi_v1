@@ -10,6 +10,7 @@ import com.example.pozi_v1.R
 import androidx.annotation.UiThread
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.example.pozi_v1.data.remote.network.Status
 import com.example.pozi_v1.databinding.ActivityMainBinding
 import com.example.pozi_v1.ui.base.BaseActivity
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -85,30 +86,50 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main),
         }
 
         viewModel.getCenterList()
-        //updateMarker()
-        //Log.d("민규",viewModel.photoBoothList.toString())
+
+
         //databinding으로 연결해서 바로 받아올수있게 한다.
-        viewModel.photoBoothList.observe(this, Observer { dbList ->
-            val markers = mutableListOf<Marker>()
-            //Log.d("민규", dbList.toString())
-            dbList.forEach {
-                val marker = Marker()
-                //Log.d("민규", dbList.toString())
+        viewModel.photoBoothList.observe(this) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    if (!it.data!!.locations.isNullOrEmpty()) { //성공
+                        val markers = mutableListOf<Marker>()
+                        it.data.locations.forEach { it ->
+                            markers += Marker().apply {
+                                position = LatLng(it.lat.toDouble(), it.lng.toDouble())
+                                isHideCollidedSymbols = true
+                                isIconPerspectiveEnabled = true
+                                // 아이콘 설정
+                                icon = if (it.name.contains("인생네컷")) {
+                                    MarkerIcons.GREEN.also {
+                                        com.naver.maps.map.R.drawable.navermap_default_marker_icon_green
+                                    }
+                                } else {
+                                    MarkerIcons.BLUE.also {
+                                        com.naver.maps.map.R.drawable.navermap_default_marker_icon_blue
+                                    }
+                                }
+                            }
+                        }
 
-                marker.position = LatLng(it.lat, it.lng)
-                marker.onClickListener = this
-
-                marker.map = naverMap
-                marker.tag = it.id
-                marker.icon = MarkerIcons.BLACK
-                marker.iconTintColor = Color.RED
-            }
-            CoroutineScope(Dispatchers.Main).launch {
-                markers.forEach { marker ->
-                    marker.map = naverMap
+                        CoroutineScope(Dispatchers.Main).launch {
+                            markers.forEach { marker ->
+                                marker.map = naverMap
+                            }
+                        }
+                        Log.d("임민규", it.data.locations.toString())
+                    } else { //값이 없을때
+                        Log.d("임민규", "else")
+                    }
+                }
+                Status.ERROR -> {
+                    Log.d("임민규", "ERROR")
+                }
+                Status.LOADING -> {
+                    Log.d("임민규", "LOADING")
                 }
             }
-        })
+        }
 
 
         if (ActivityCompat.checkSelfPermission(
@@ -148,27 +169,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main),
                     }
                 }
             }
-    }
-
-    private fun updateMarker() {
-        viewModel.photoBoothList.observe(this, Observer { dbList ->
-            val markers = mutableListOf<Marker>()
-            dbList.forEach {
-                val marker = Marker()
-                marker.position = LatLng(it.lat, it.lng)
-                marker.onClickListener = this
-
-                marker.map = naverMap
-                marker.tag = it.id
-                marker.icon = MarkerIcons.BLACK
-                marker.iconTintColor = Color.RED
-            }
-            CoroutineScope(Dispatchers.Main).launch {
-                markers.forEach { marker ->
-                    marker.map = naverMap
-                }
-            }
-        })
     }
 
     companion object {

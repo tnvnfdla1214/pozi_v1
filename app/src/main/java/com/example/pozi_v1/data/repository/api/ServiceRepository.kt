@@ -1,8 +1,8 @@
 package com.example.pozi_v1.data.repository.api
 
-import androidx.lifecycle.MutableLiveData
-import com.example.pozi_v1.data.remote.model.Locations
+import com.example.pozi_v1.data.remote.network.LocationRes
+import com.example.pozi_v1.data.remote.network.Resource
 
 interface ServiceRepository {
-    suspend fun getPhotoBoothList(): List<Locations>
+    suspend fun getPhotoBoothList(): Resource<LocationRes>
 }
