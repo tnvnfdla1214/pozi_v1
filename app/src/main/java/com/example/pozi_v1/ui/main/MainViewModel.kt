@@ -23,7 +23,7 @@ class MainViewModel @Inject constructor(private val serviceRepository: ServiceRe
     fun getCenterList() {
         CoroutineScope(Dispatchers.IO).launch {
             _photoBoothList.postValue(serviceRepository.getPhotoBoothList())
-            Log.d("민규", serviceRepository.getPhotoBoothList().toString())
+
         }
     }
 }

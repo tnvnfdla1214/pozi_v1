@@ -3,6 +3,7 @@ package com.example.pozi_v1.domain.repository
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.pozi_v1.data.remote.model.Locations
+import com.example.pozi_v1.data.remote.network.LocationRes
 import com.example.pozi_v1.data.remote.network.RetrofitInterface
 import com.example.pozi_v1.data.repository.api.ServiceRepository
 import kotlinx.coroutines.*
@@ -15,39 +16,40 @@ class ServiceRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : ServiceRepository {
     override suspend fun getPhotoBoothList(): List<Locations> {
-        var responseData = mutableListOf<Locations>()
+        var responseData: List<Locations> = listOf()
         api.also {
-            api.getPhotoBoothList().enqueue(object : Callback<Locations> {
+            api.getPhotoBoothList().enqueue(object : Callback<LocationRes> {
                 override fun onResponse(
-                    call: Call<Locations>,
-                    response: Response<Locations>
+                    call: Call<LocationRes>,
+                    response: Response<LocationRes>
                 ) {
                     if (response.isSuccessful) {
                         // code == 200
-                        response.body()?.let { dto ->
-                            //Log.d("민규1", dto.address)
-                            //responseData.add(dto)
-                            Log.d("민규1", dto.toString())
-                        }
 
-                        CoroutineScope(ioDispatcher).launch {
+                        //Log.d("임민규",response.body()!!.locations.toString()) //두번 불리는 이유
+                        responseData = response.body()!!.locations
 
-                            response.body()?.let { dto ->
-                                //Log.d("민규1", dto.address)
-                                responseData.add(dto)
-                                Log.d("민규1", dto.toString())
-                            }
-                        }
+//                        response.body()?.let { data ->
+//                            Log.d("민규",data.toString().get(0).toString())
+//                            responseData = data.locations
+//                        }
+//                        CoroutineScope(ioDispatcher).launch {
+//                            //Log.d("임민규",response.body()!!.locations.toString()) //두번 불리는 이유
+//                            response.body()?.let { dto ->
+//                               //responseData.add(dto)
+//                            }
+//                        }
                     } else {
                         // code == 400
                     }
                 }
 
-                override fun onFailure(call: Call<Locations>, t: Throwable) {
+                override fun onFailure(call: Call<LocationRes>, t: Throwable) {
                     //실패
                 }
             })
         }
-        return responseData.toList()
+
+        return responseData
     }
 }

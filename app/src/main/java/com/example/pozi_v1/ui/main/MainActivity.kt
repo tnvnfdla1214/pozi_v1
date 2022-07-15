@@ -90,13 +90,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main),
         //databinding으로 연결해서 바로 받아올수있게 한다.
         viewModel.photoBoothList.observe(this, Observer { dbList ->
             val markers = mutableListOf<Marker>()
-            Log.d("민규", "ㅁㄴㅇ123")
+            //Log.d("민규", dbList.toString())
             dbList.forEach {
-                Log.d("민규", "ㅁㄴㅇ2")
                 val marker = Marker()
-                Log.d("민규", it.address)
-                Log.d("민규", it.name)
-                Log.d("민규", it.lat.toString() + " " + it.lng.toString())
+                //Log.d("민규", dbList.toString())
+
                 marker.position = LatLng(it.lat, it.lng)
                 marker.onClickListener = this
 
@@ -153,15 +151,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main),
     }
 
     private fun updateMarker() {
-        Log.d("민규", "ㅁㄴㅇ1")
         viewModel.photoBoothList.observe(this, Observer { dbList ->
             val markers = mutableListOf<Marker>()
             dbList.forEach {
-                Log.d("민규", "ㅁㄴㅇ2")
                 val marker = Marker()
-                Log.d("민규", it.address)
-                Log.d("민규", it.name)
-                Log.d("민규", it.lat.toString() + " " + it.lng.toString())
                 marker.position = LatLng(it.lat, it.lng)
                 marker.onClickListener = this
 
@@ -185,7 +178,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main),
 
     override fun onClick(overly: Overlay): Boolean {
         TODO("Not yet implemented")
-
-
     }
 }

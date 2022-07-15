@@ -1,5 +1,6 @@
 package com.example.pozi_v1.di
 
+import android.util.Log
 import com.example.pozi_v1.BuildConfig
 import com.example.pozi_v1.data.remote.network.RetrofitInterface
 import com.example.pozi_v1.data.remote.url.LocationsUrl
